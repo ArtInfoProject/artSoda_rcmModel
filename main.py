@@ -19,38 +19,37 @@ for exhibition in data:
 myExiDf = pd.DataFrame(data, columns=['exhibition_title', 'exhibition_contents'])
 # print(myExiDf['exhibition_contents'])
 
-content_embeddings = model.encode(myExiDf['exhibition_contents'].tolist())
+contentsEmbeddings = model.encode(myExiDf['exhibition_contents'].tolist())
+print(len(contentsEmbeddings))
+def rcm(user_input, topN=5):
+    matchingRows = myExiDf[myExiDf['exhibition_title'] == user_input]
 
-
-def find_similar_titles(user_input, top_n=5):
-    matching_rows = myExiDf[myExiDf['exhibition_title'] == user_input]
-
-    if matching_rows.empty:
+    if matchingRows.empty:
         print(f"No exhibition found with title '{user_input}'")
         return [], []
 
-    input_content_index = matching_rows.index[0]
-    input_content_embedding = content_embeddings[input_content_index]
-    similarities = util.cos_sim(input_content_embedding, content_embeddings).flatten()
-
+    inputContentIndex = matchingRows.index[0]
+    inputContentEmbedding = contentsEmbeddings[inputContentIndex]
+    similarities = util.cos_sim(inputContentEmbedding, contentsEmbeddings).flatten()
+    print(inputContentIndex)
+    print(inputContentEmbedding)
     print("Length of similarities:", len(similarities))
     print("Similarities array:", similarities)
 
-    if len(similarities) < top_n:
+    if len(similarities) < topN:
         print("Not enough exhibitions for comparison.")
         return [], []
 
-    similar_indices = (-similarities).argsort()[:min(top_n, len(similarities))]
-    similar_indices = similar_indices.tolist()
-    similar_titles = myExiDf.loc[similar_indices, 'exhibition_title'].tolist()
-    similar_similarities = similarities[similar_indices].tolist()
-    return similar_titles, similar_similarities
+    similarIndices = (-similarities).argsort()[:min(topN, len(similarities))]
+    similarIndices = similarIndices.tolist()
+    similarTitles = myExiDf.loc[similarIndices, 'exhibition_title'].tolist()
+    similaritiesList = similarities[similarIndices].tolist()
+    return similarTitles, similaritiesList
 
 
 user_input = input("Enter an exhibition title: ")
 
-# Find and print similar titles with similarities
-top_similar_titles, similarities = find_similar_titles(user_input)
+topTitles, similarities = rcm(user_input)
 print(f"Top 5 similar titles for '{user_input}' based on content similarity:")
-for title, similarity in zip(top_similar_titles, similarities):
+for title, similarity in zip(topTitles, similarities):
     print(f"{title} - Similarity: {similarity:.4f}")
