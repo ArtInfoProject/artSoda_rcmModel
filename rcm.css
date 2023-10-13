@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.container {
+    position: relative;
+    margin: 5vh;
+}
+
+.rmd {
+    border-style: double none;
+    border-color: #FF9999;
+    padding: 5vh 0;
+}
+
+span {
+    position: absolute;
+    top: -5px; /* Adjust the position of the span above the top border */
+    left: 0;
+    font-size: large;
+    color: #FF5E5E;
+    background-color: #fff; /* Background color to match the container background */
+    padding: 0 10px 0 0; /* Adjust padding for better visibility */
+}
